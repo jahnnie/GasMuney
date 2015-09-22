@@ -10,6 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import android.text.Editable;
 import android.R.menu;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -34,12 +35,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-	private static final String TAG = "Bigga";
+	private static final String TAG = "COME ON";
+	private static final double multiplier = 2.05;
 	TextView textView;
 	private double price;
 	ArrayList<Double> accumulated= new ArrayList<Double>();
 	private int n;
-	
 	public Person alex = new Person("Alex", 0);
 	public Person ebod = new Person("Ebod", 0);
 	public Person joe = new Person("Joe", 0);
@@ -92,9 +93,13 @@ public class MainActivity extends Activity {
 
         yen.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
+            	if(alex.isRiding() == false){
             	alex.setRiding(true);
             	homies.add(alex);
-            	setN(getN()+1);
+            	setN(getN()+1);}
+            	else
+            		Toast.makeText(getApplicationContext(), "Already riding!", Toast.LENGTH_SHORT).show();
+            		
             }
         }); 
         
@@ -116,11 +121,14 @@ public class MainActivity extends Activity {
               
         sho.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+            	if(ebod.isRiding() == false){
             	ebod.setRiding(true);
             	homies.add(ebod);
             	setN(getN()+1);
+            	}
+            	else Toast.makeText(getApplicationContext(), "Already riding!", Toast.LENGTH_SHORT).show();
             }
-        }); 
+        });
         
         sho.setOnTouchListener( new View.OnTouchListener() {
 			@Override
@@ -139,9 +147,12 @@ public class MainActivity extends Activity {
         
         stew.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+            	if(joe.isRiding() == false){
             	joe.setRiding(true);
             	homies.add(joe);
             	setN(getN()+1);
+            	}
+            	else Toast.makeText(getApplicationContext(), "Already riding!", Toast.LENGTH_SHORT).show();
             }
         });
         stew.setOnTouchListener( new View.OnTouchListener() {
@@ -199,7 +210,7 @@ o	Add person.amountOwed to person.accumulated
 	
 	public double calculateRate(){
 			//set price here
-			double rate = getPrice()/(getN() + 1);
+			double rate = getPrice()*multiplier/(getN() + 1);
 			return rate;
 	}
 
@@ -221,18 +232,57 @@ o	Add person.amountOwed to person.accumulated
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
-	    case R.id.nigga:
+	    case R.id.item1:
 	    	final EditText input = new EditText(MainActivity.this);
 	    	AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
 	    	alertDialog.setView(input);
             alertDialog.setTitle("Pay Up!");
-            alertDialog.setMessage("Who's paying?");
+            alertDialog.setMessage("How much?");
+            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,
+                    "OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                        	Editable name = input.getText();
+                        	alex.setAccumulated(alex.getAccumulated() - Double.parseDouble(name.toString()));
+                        }
+                    });
             //have user type in name, then enter
             //If name is X, clear accumulated
             alertDialog.show();
 	        return true;
-	    default:
-	        return super.onOptionsItemSelected(item);
+	    case R.id.item2:
+	    	final EditText input1 = new EditText(MainActivity.this);
+	    	AlertDialog alertDialog1 = new AlertDialog.Builder(MainActivity.this).create();
+	    	alertDialog1.setView(input1);
+	        alertDialog1.setTitle("Pay Up!");
+	        alertDialog1.setMessage("How much?");
+	        alertDialog1.setButton(DialogInterface.BUTTON_POSITIVE,
+	                "OK", new DialogInterface.OnClickListener() {
+	                    @Override
+	                    public void onClick(DialogInterface dialogInterface, int i) {
+	                    	Editable name = input1.getText();
+	                    	ebod.setAccumulated(ebod.getAccumulated() - Double.parseDouble(name.toString()));
+	                    }
+	                });
+	        alertDialog1.show();	
+	        return true;
+    case R.id.item3:
+    	final EditText input2 = new EditText(MainActivity.this);
+    	AlertDialog alertDialog2 = new AlertDialog.Builder(MainActivity.this).create();
+    	alertDialog2.setView(input2);
+        alertDialog2.setTitle("Pay Up!");
+        alertDialog2.setMessage("How much?");
+        alertDialog2.setButton(DialogInterface.BUTTON_POSITIVE,
+                "OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    	Editable name = input2.getText();
+                    	joe.setAccumulated(joe.getAccumulated() - Double.parseDouble(name.toString()));
+                    }
+                });
+        alertDialog2.show();
+	default:
+		return super.onOptionsItemSelected(item);
 	    }
 	}
 	
@@ -294,7 +344,7 @@ o	Add person.amountOwed to person.accumulated
 	 @Override
 	 public void onRestoreInstanceState(Bundle savedInstanceState) {
 	   super.onRestoreInstanceState(savedInstanceState);
-	   // Restore state from savedInstanceState
+	   //Restore state from savedInstanceState
 	   alex.setAccumulated(savedInstanceState.getDouble("Alex"));
 	   ebod.setAccumulated(savedInstanceState.getDouble("Ebod"));
 	   joe.setAccumulated(savedInstanceState.getDouble("Joe"));  
@@ -311,4 +361,5 @@ o	Add person.amountOwed to person.accumulated
 	      // Commit the edits!
 	     editor.commit();
 	 }
+	 
 }
