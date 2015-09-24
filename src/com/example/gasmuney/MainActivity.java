@@ -61,7 +61,9 @@ public class MainActivity extends Activity {
 	public void setN(int n) {
 		this.n = n;
 	}
-	
+	/*Pre-condition: saved state; default or after app exit
+	 *Post-condition: create buttons for each homie, parse gas price data and load it in text on screen
+	 * */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -207,13 +209,18 @@ o	Add person.amountOwed to person.accumulated
             }
         });
 	}
-	
+	/*pre-condition: n>0, price is valid (double>0) 
+	 *post-condition: output rate per trip
+	 * */
 	public double calculateRate(){
 			//set price here
 			double rate = getPrice()*multiplier/(getN() + 1);
 			return rate;
 	}
-
+	
+	/*pre-condition: initialized menu
+	 *post-condition: display menu on home screen
+	 * */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -221,6 +228,9 @@ o	Add person.amountOwed to person.accumulated
 		return true;
 	}
 	
+	/*pre-condition: initialized menu
+	 *post-condition: set each menu item title to the name of carpooler and the accumulated owed beside it
+	 * */
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 	    menu.getItem(0).setTitle("Alex" + ": "+ String.valueOf(Math.round(alex.getAccumulated() * 100.0) / 100.0));
@@ -229,6 +239,10 @@ o	Add person.amountOwed to person.accumulated
 	    menu.getItem(3).setTitle("clear...");
 	    return true;
 	}
+	
+	/*pre-condition: initialized menu item
+	 *post-condition: when item clicked, open dialog and textbox to type in amount paid, then deduct accumulated amount
+	 * */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
@@ -286,20 +300,24 @@ o	Add person.amountOwed to person.accumulated
 	    }
 	}
 	
+	//class handles parsing
 	 private class Price extends AsyncTask<String, Void, Void> {
-		    Connection con = null;
-
+		    Connection con = null; //initialize interface for connection
+		    
+		    /*pre-condition: valid params
+		     *post-condition: price is parsed in background
+		     * */
 		    @Override
 		    protected Void doInBackground(String... params) {
 		        Document doc = null;
 		        if (con !=null){
 		            try {
 		                doc = con.get();
-		                Elements element = doc.getElementsByClass("SideAvg");
-		                setPrice(Double.parseDouble(element.text().substring(26, 33))/100);
+		                Elements element = doc.getElementsByClass("SideAvg"); //HTML tag
+		                setPrice(Double.parseDouble(element.text().substring(26, 33))/100); //price is within other text
 		                }
-		            catch (IOException except) {
-		                except.printStackTrace();
+		            catch (IOException exception) {
+		                exception.printStackTrace();
 		            }
 		        }
 		        else{
@@ -316,21 +334,7 @@ o	Add person.amountOwed to person.accumulated
 		        textView.setTextColor(Color.RED);
 		    }
 		}
-	 /*
-	 public void onSaveInstanceState(Bundle savedState) {
 
-		    super.onSaveInstanceState(savedState);
-
-		    // Note: getValues() is a method in your ArrayAdaptor subclass
-		    double[] values = new double[3];
-		    for(int i = 0; i < 3; i++){
-		    	values[i] = accumulated.get(i);
-		    }
-		    accumulated.clear();
-		    //clear accumulated
-		    savedState.putDoubleArray("myKey", values);
-
-		}*/
 	 @Override
 	 public void onSaveInstanceState(Bundle savedInstanceState) {
 	   super.onSaveInstanceState(savedInstanceState);
